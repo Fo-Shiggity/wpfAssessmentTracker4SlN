@@ -142,6 +142,7 @@ namespace wpfAssessmentTracker4
                     }
                 }
                 RefreshFilter();
+              
             }
             catch (Exception ex)
             {
@@ -187,17 +188,22 @@ namespace wpfAssessmentTracker4
                             DateCompleted = DateTime.Now
                         });
 
-                        // Purge from active collection
+                        // Delete from incomplete assessments
                         IncompleteAssessments.Remove(editedAssessment);
                         RefreshFilter();
+                       
                     }
                 }));
             }
         }
 
+
+       
+
         private void FilterChanged(object sender, TextChangedEventArgs e)
         {
             RefreshFilter();
+           
         }
 
         private void RefreshFilter()
@@ -216,22 +222,16 @@ namespace wpfAssessmentTracker4
                 return matchesUnit && matchesType && matchesName;
             };
         }
-
+      
         private void BtnClearFilters_Click(object sender, RoutedEventArgs e)
         {
             TxtFilterUnit.Clear();
             TxtFilterType.Clear();
             TxtFilterName.Clear();
             RefreshFilter();
+            
         }
 
-
-
-
-
-
-
-
-
+       
     }
 }
