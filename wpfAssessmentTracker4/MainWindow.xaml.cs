@@ -29,6 +29,7 @@ namespace wpfAssessmentTracker4
 
     public class CompletedAssessment
     {
+        public DateTime DueDate { get; set; } = DateTime.Now;
         public string Unit { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
@@ -74,7 +75,7 @@ namespace wpfAssessmentTracker4
                 {
                     foreach (var item in IncompleteAssessments)
                     {
-                        writer.WriteLine($"{item.Unit},{item.Type},{item.Name},{item.Grade}");
+                        writer.WriteLine($"{item.DueDate},{item.Unit},{item.Type},{item.Name},{item.Grade}");
                     }
                 }
 
@@ -83,7 +84,7 @@ namespace wpfAssessmentTracker4
                 {
                     foreach (var item in completedAssessments)
                     {
-                        writer.WriteLine($"{item.Unit},{item.Type},{item.Name},{item.Grade},{item.DateCompleted:yyyy-MM-dd}");
+                        writer.WriteLine($"{item.DueDate},{item.Unit},{item.Type},{item.Name},{item.Grade},{item.DateCompleted:yyyy-MM-dd}");
                     }
                 }
             }
@@ -109,10 +110,18 @@ namespace wpfAssessmentTracker4
                         string? line;
                         while ((line = reader.ReadLine()) != null)
                         {
-                            var parts = line.Split(',');
-                            if (parts.Length >= 4)
+                            var parts = line.Split('|');
+
+                            if (parts.Length >= 5)
                             {
-                                IncompleteAssessments.Add(new Assessment { Unit = parts[0], Type = parts[1], Name = parts[2], Grade = parts[3] });
+                                IncompleteAssessments.Add(new Assessment 
+                                {
+                                    Unit = parts[0],
+                                    Type = parts[1], 
+                                    Name = parts[2], 
+                                    Grade = parts[3], 
+                                    DueDate = DateTime.Parse(parts[4])  
+                                });
                             }
                         }
                     }
@@ -126,8 +135,8 @@ namespace wpfAssessmentTracker4
                         string? line;
                         while ((line = reader.ReadLine()) != null)
                         {
-                            var parts = line.Split(',');
-                            if (parts.Length >= 5)
+                            var parts = line.Split('|');
+                            if (parts.Length >= 6)
                             {
                                 completedAssessments.Add(new CompletedAssessment
                                 {
@@ -135,7 +144,8 @@ namespace wpfAssessmentTracker4
                                     Type = parts[1],
                                     Name = parts[2],
                                     Grade = parts[3],
-                                    DateCompleted = DateTime.TryParse(parts[4], out var dt) ? dt : DateTime.Now
+                                    DateCompleted = DateTime.TryParse(parts[4], out var dt) ? dt : DateTime.Now,
+                                    DueDate = DateTime.Parse(parts[5])
                                 });
                             }
                         }
@@ -181,6 +191,7 @@ namespace wpfAssessmentTracker4
                         // Transfer to Completed collection
                         completedAssessments.Add(new CompletedAssessment
                         {
+                            DueDate = editedAssessment.DueDate,
                             Unit = editedAssessment.Unit,
                             Type = editedAssessment.Type,
                             Name = editedAssessment.Name,
