@@ -60,6 +60,8 @@ namespace wpfAssessmentTracker4
 
             // Auto load on app initialization
             LoadDataFromFile();
+
+                        
         }
     
         
@@ -219,21 +221,33 @@ namespace wpfAssessmentTracker4
 
         private void RefreshFilter()
         {
-            ICollectionView view = CollectionViewSource.GetDefaultView(IncompleteAssessments);
-            if (view == null) return;
-
-            view.Filter = item =>
+            // Apply filter to Incomplete Assessments
+            ICollectionView incompleteView = CollectionViewSource.GetDefaultView(IncompleteAssessments);
+            if (incompleteView != null)
             {
-                if (item is not Assessment assessment) return false;
+                incompleteView.Filter = AssessmentFilter;
+            }
 
-                bool matchesUnit = string.IsNullOrEmpty(TxtFilterUnit.Text) || assessment.Unit.Contains(TxtFilterUnit.Text, StringComparison.OrdinalIgnoreCase);
-                bool matchesType = string.IsNullOrEmpty(TxtFilterType.Text) || assessment.Type.Contains(TxtFilterType.Text, StringComparison.OrdinalIgnoreCase);
-                bool matchesName = string.IsNullOrEmpty(TxtFilterName.Text) || assessment.Name.Contains(TxtFilterName.Text, StringComparison.OrdinalIgnoreCase);
-
-                return matchesUnit && matchesType && matchesName;
-            };
+            // Apply filter to Complete Assessments
+            /* for some reason when i add the filter to the complete assessments it makes them invisiable...
+            ICollectionView completeView = CollectionViewSource.GetDefaultView(completedAssessments);
+            if (completeView != null)
+            {
+                completeView.Filter = AssessmentFilter;
+            }
+            */
         }
-      
+        private bool AssessmentFilter(object item)
+        {
+            if (item is not Assessment assessment) return false;
+
+            bool matchesUnit = string.IsNullOrEmpty(TxtFilterUnit.Text) || assessment.Unit.Contains(TxtFilterUnit.Text, StringComparison.OrdinalIgnoreCase);
+            bool matchesType = string.IsNullOrEmpty(TxtFilterType.Text) || assessment.Type.Contains(TxtFilterType.Text, StringComparison.OrdinalIgnoreCase);
+            bool matchesName = string.IsNullOrEmpty(TxtFilterName.Text) || assessment.Name.Contains(TxtFilterName.Text, StringComparison.OrdinalIgnoreCase);
+
+            return matchesUnit && matchesType && matchesName;
+        }
+
         private void BtnClearFilters_Click(object sender, RoutedEventArgs e)
         {
             TxtFilterUnit.Clear();
