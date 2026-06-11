@@ -1,1 +1,12 @@
 # wpfAssessmentTracker4SlN
+A simple WPF Assessment Tracker
+
+#Desciption
+a simple wpf application that records assessments and saves them into seperate files depending on if assessment is complete or not.
+
+## Purpose
+The Purpose of this project is to meet the requirments of AT2 Assessment
+
+
+## Author
+Victoria Veltman 30140939
