@@ -1,4 +1,13 @@
-﻿using System.Collections.ObjectModel;
+﻿/* Title: Wpf Assessment Tracker
+ * 
+ * Description: A simple wpf application that allows users to add and delete assessments to keep track of them
+ * 
+ * Author: Victoria Veltman
+ */
+
+
+
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
