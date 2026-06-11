@@ -1,6 +1,8 @@
 ﻿/* Title: Wpf Assessment Tracker
  * 
  * Description: A simple wpf application that allows users to add and delete assessments to keep track of them
+ * Assessment Tracker will allow user to input due date,Assessment Name, Unit Name and Assessment Type 
+ * 
  * 
  * Author: Victoria Veltman
  */
