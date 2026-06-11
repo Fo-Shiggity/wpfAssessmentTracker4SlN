@@ -228,14 +228,7 @@ namespace wpfAssessmentTracker4
                 incompleteView.Filter = AssessmentFilter;
             }
 
-            // Apply filter to Complete Assessments
-            /* for some reason when i add the filter to the complete assessments it makes them invisiable...
-            ICollectionView completeView = CollectionViewSource.GetDefaultView(completedAssessments);
-            if (completeView != null)
-            {
-                completeView.Filter = AssessmentFilter;
-            }
-            */
+        
         }
         private bool AssessmentFilter(object item)
         {
