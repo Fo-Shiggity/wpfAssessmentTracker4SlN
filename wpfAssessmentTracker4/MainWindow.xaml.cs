@@ -60,7 +60,7 @@ namespace wpfAssessmentTracker4
 
             // Auto load on app initialization
             LoadDataFromFile();
-
+            
                         
         }
     
@@ -70,6 +70,7 @@ namespace wpfAssessmentTracker4
         
         private void SaveDataToFile()
         {
+
             try
             {
                 // Save Current Assessments
@@ -77,6 +78,19 @@ namespace wpfAssessmentTracker4
                 {
                     foreach (var item in IncompleteAssessments)
                     {
+                        if(item.Grade == "S")
+                        {
+                            completedAssessments.Add(new CompletedAssessment
+                            {
+                                DueDate = item.DueDate,
+                                Unit = item.Unit,
+                                Type = item.Type,
+                                Name = item.Name,
+                                Grade = "S",
+                                DateCompleted = DateTime.Now
+                            });
+                            continue;
+                        }
                         writer.WriteLine($"{item.DueDate},{item.Unit},{item.Type},{item.Name},{item.Grade}");
                     }
                 }
@@ -89,6 +103,8 @@ namespace wpfAssessmentTracker4
                         writer.WriteLine($"{item.DueDate},{item.Unit},{item.Type},{item.Name},{item.Grade},{item.DateCompleted:yyyy-MM-dd}");
                     }
                 }
+                LoadDataFromFile();
+
             }
             catch (Exception ex)
             {
@@ -112,17 +128,17 @@ namespace wpfAssessmentTracker4
                         string? line;
                         while ((line = reader.ReadLine()) != null)
                         {
-                            var parts = line.Split('|');
+                            var parts = line.Split(',');
 
                             if (parts.Length >= 5)
                             {
                                 IncompleteAssessments.Add(new Assessment 
                                 {
-                                    Unit = parts[0],
-                                    Type = parts[1], 
-                                    Name = parts[2], 
-                                    Grade = parts[3], 
-                                    DueDate = DateTime.Parse(parts[4])  
+                                    Unit = parts[1],
+                                    Type = parts[2], 
+                                    Name = parts[3], 
+                                    Grade = parts[4], 
+                                    DueDate = DateTime.Parse(parts[0])  
                                 });
                             }
                         }
@@ -137,17 +153,18 @@ namespace wpfAssessmentTracker4
                         string? line;
                         while ((line = reader.ReadLine()) != null)
                         {
-                            var parts = line.Split('|');
+                            var parts = line.Split(',');
                             if (parts.Length >= 6)
                             {
                                 completedAssessments.Add(new CompletedAssessment
                                 {
-                                    Unit = parts[0],
-                                    Type = parts[1],
-                                    Name = parts[2],
-                                    Grade = parts[3],
-                                    DateCompleted = DateTime.TryParse(parts[4], out var dt) ? dt : DateTime.Now,
-                                    DueDate = DateTime.Parse(parts[5])
+                                    DueDate = DateTime.Parse(parts[0]),
+                                    Unit = parts[1],
+                                    Type = parts[2],
+                                    Name = parts[3],
+                                    Grade = parts[4],
+                                    DateCompleted = DateTime.TryParse(parts[5], out var dt) ? dt : DateTime.Now
+                                   
                                 });
                             }
                         }
@@ -175,10 +192,7 @@ namespace wpfAssessmentTracker4
             MessageBox.Show("Data successfully reloaded from file.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void Window_Closing(object sender, CancelEventArgs e)
-        {
-            SaveDataToFile();
-        }
+       
 
 
         private void IncompleteAssessments_Edit(object sender, DataGridRowEditEndingEventArgs e)
@@ -250,6 +264,9 @@ namespace wpfAssessmentTracker4
             
         }
 
-       
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            SaveDataToFile();
+        }
     }
 }
