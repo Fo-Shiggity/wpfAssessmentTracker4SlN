@@ -71,8 +71,8 @@ namespace wpfAssessmentTracker4
 
             // Auto load on app initialization
             LoadDataFromFile();
-            
-                        
+
+                       
         }
     
         
@@ -277,7 +277,23 @@ namespace wpfAssessmentTracker4
 
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
+            Incomplete_Assessments.CommitEdit(DataGridEditingUnit.Row, true);
+
             SaveDataToFile();
+          
+
+                // Display a dialog box with Yes and No buttons
+                MessageBoxResult result = MessageBox.Show(
+                "Are you sure you want to exit?",
+                "Confirm Close",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            // If the user clicks No, cancel the closing process
+            if (result == MessageBoxResult.No)
+            {
+                e.Cancel = true;
+            }
         }
     }
 }
