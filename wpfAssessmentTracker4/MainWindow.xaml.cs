@@ -5,6 +5,8 @@
  * 
  * 
  * Author: Victoria Veltman 30140939
+ * 
+ * adding this comment to answer a question in AT2.4
  */
 
 
