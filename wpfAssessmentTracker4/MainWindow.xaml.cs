@@ -203,19 +203,39 @@ namespace wpfAssessmentTracker4
             MessageBox.Show("Data successfully reloaded from file.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-       
+
 
 
         private void IncompleteAssessments_Edit(object sender, DataGridRowEditEndingEventArgs e)
         {
             if (e.EditAction == DataGridEditAction.Commit && e.Row.Item is Assessment editedAssessment)
             {
-                // Use Dispatcher to let the bindings update before verifying the status shift
-                Dispatcher.BeginInvoke(new Action(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
+                    // Skip if name is empty (user clicked new row but didn't type)
+                    if (string.IsNullOrWhiteSpace(editedAssessment.Name))
+                        return;
+
+                    // Check for duplicate name, excluding the item being edited
+                    var duplicate = IncompleteAssessments
+                        .Where(a => a != editedAssessment)
+                        .FirstOrDefault(a =>
+                            string.Equals(a.Name, editedAssessment.Name, StringComparison.OrdinalIgnoreCase));
+
+                    if (duplicate != null)
+                    {
+                        MessageBox.Show(
+                            $"An assessment named '{editedAssessment.Name}' already exists.",
+                            "Duplicate Assessment", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                        IncompleteAssessments.Remove(editedAssessment);
+                        RefreshFilter();
+                        return;
+                    }
+
+                    // Grade S — transfer to completed
                     if (editedAssessment.Grade == "S")
                     {
-                        // Transfer to Completed collection
                         completedAssessments.Add(new CompletedAssessment
                         {
                             DueDate = editedAssessment.DueDate,
@@ -226,17 +246,16 @@ namespace wpfAssessmentTracker4
                             DateCompleted = DateTime.Now
                         });
 
-                        // Delete from incomplete assessments
                         IncompleteAssessments.Remove(editedAssessment);
                         RefreshFilter();
-                       
                     }
-                }));
+
+                }, System.Windows.Threading.DispatcherPriority.Background);
             }
         }
 
 
-       
+
 
         private void FilterChanged(object sender, TextChangedEventArgs e)
         {
@@ -295,5 +314,30 @@ namespace wpfAssessmentTracker4
                 e.Cancel = true;
             }
         }
+        private (bool found, int index) BinarySearchAssessment(string unit, string name)
+        {
+            int left = 0;
+            int right = IncompleteAssessments.Count - 1;
+
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+                var midItem = IncompleteAssessments[mid];
+
+                int comparison = string.Compare(midItem.Unit, unit, StringComparison.OrdinalIgnoreCase);
+                if (comparison == 0)
+                    comparison = string.Compare(midItem.Name, name, StringComparison.OrdinalIgnoreCase);
+
+                if (comparison == 0)
+                    return (true, mid);  // Duplicate found
+                else if (comparison < 0)
+                    left = mid + 1;
+                else
+                    right = mid - 1;
+            }
+
+            return (false, left); // No duplicate found
+        }
+
     }
 }
